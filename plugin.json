@@ -1,0 +1,113 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "switchboard-finance",
+  "version": "1.0.1",
+  "description": "Check which Australian business finance fits a situation (ATO debt, caveat, equipment, property), then, with consent, ask a licensed broker to call.",
+  "author": {
+    "name": "Switchboard Finance Pty Ltd",
+    "email": "hello@switchboardfinance.com.au",
+    "url": "https://www.switchboardfinance.com.au"
+  },
+  "homepage": "https://api.switchboardfinance.com.au/docs",
+  "repository": "https://github.com/Nicklim123/switchboard-finance-mcp",
+  "keywords": [
+    "business loans",
+    "australia",
+    "ato debt",
+    "caveat loan",
+    "equipment finance",
+    "commercial property",
+    "broker"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Switchboard Finance",
+        "shortDescription": "Australian business loans",
+        "longDescription": "Switchboard Finance is a licensed Australian finance broker for self-employed business owners and ABN holders (Switchboard Finance Pty Ltd, Credit Representative 576702 of Australian Credit Licence 517192).\n\nDescribe a business finance need in plain words, such as clearing an ATO debt, a bank saying no, buying equipment or a truck, a caveat or second mortgage, commercial property or buying a motel. The plugin shows which finance types fit, with checks against observed ranges for loan size, LVR, time to fund and trading history, the documents usually needed and common deal-breakers.\n\nIf you want to talk to a broker, tick the consent box (or agree in chat) and a licensed broker calls you, usually the same business day. Nothing is applied for and no credit check is run.\n\nGeneral information only: no lender is named, nothing is a credit decision, offer or advice, and personal or consumer loans are out of scope.",
+        "developerName": "Switchboard Finance Pty Ltd",
+        "category": "Finance",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://www.switchboardfinance.com.au",
+        "supportURL": "https://www.switchboardfinance.com.au/contact",
+        "privacyPolicyURL": "https://api.switchboardfinance.com.au/privacy",
+        "termsOfServiceURL": "https://api.switchboardfinance.com.au/terms",
+        "defaultPrompt": [
+          "We owe the ATO $180k and need it cleared this week. We own a warehouse worth $1.2M.",
+          "I need about $120k for an excavator for my civil company.",
+          "What documents do I need for invoice finance?"
+        ],
+        "brandColor": "#0B1120",
+        "brandColorDark": "#FFD44D",
+        "composerIcon": "./assets/composer-icon.png",
+        "logo": "./assets/logo.png",
+        "screenshots": [
+          "./assets/screenshot-1.png",
+          "./assets/screenshot-2.png",
+          "./assets/screenshot-3.png"
+        ]
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "ATO debt with property security: should find caveat/second-mortgage options and check LVR and timing.",
+              "prompt": "We owe the ATO $180k and need it cleared this week. Our company owns a warehouse worth $1.2M with $400k owing.",
+              "tools_triggered": "check_fit",
+              "expected_behavior": "Card lists Caveat loans as likely in scope, combined LVR about 48% passes, timing flagged as tight, with documents and deal-breakers."
+            },
+            {
+              "description": "Equipment purchase: should route to asset finance, not property or development.",
+              "prompt": "I run a civil construction company, 3 years trading, and need $120k for an excavator.",
+              "tools_triggered": "check_fit",
+              "expected_behavior": "Vehicle, equipment and asset finance is the only fit; loan size check passes; trading history passes."
+            },
+            {
+              "description": "Overview of what the business arranges.",
+              "prompt": "What types of business finance does Switchboard arrange?",
+              "tools_triggered": "list_products",
+              "expected_behavior": "11 finance types with typical loan sizes, time to fund and rate ranges, each with a source URL."
+            },
+            {
+              "description": "Knowledge lookup with citation.",
+              "prompt": "What's the usual LVR for a second mortgage for a business?",
+              "tools_triggered": "search, fetch",
+              "expected_behavior": "search returns lane:second-mortgage; fetch returns that page; the answer gives the LVR range and cites the second-mortgage page URL."
+            },
+            {
+              "description": "Consented callback request.",
+              "prompt": "Please get a broker to call me. I'm Test Reviewer, 0400 000 000, test@example.com. I need $90k for a truck. I agree to be contacted.",
+              "tools_triggered": "request_callback",
+              "expected_behavior": "Returns a reference starting SB- and the expected contact time. Names starting with Test receive no follow-up emails."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Personal and consumer loans are out of scope; the plugin says so and does not offer a callback for it.",
+              "prompt": "I need a personal loan for a holiday."
+            },
+            {
+              "description": "The plugin never names or ranks lenders; it gives general ranges and suggests talking to a broker.",
+              "prompt": "Which bank will give my business the lowest rate? Just name the lender."
+            },
+            {
+              "description": "No consent or contact details were given, so request_callback must not be called; the assistant asks for them first.",
+              "prompt": "Get a broker to call me."
+            }
+          ]
+        },
+        "demo_recording_url": "https://github.com/Nicklim123/switchboard-finance-mcp/blob/main/demo.mp4",
+        "commerce": false
+      },
+      "publication": {
+        "countries": [
+          "AU"
+        ],
+        "release_notes": "First release. Check which Australian business finance fits (check_fit, list_products, search, fetch) with an interactive fit-check card, and request a licensed broker callback with recorded consent (request_callback)."
+      }
+    }
+  }
+}

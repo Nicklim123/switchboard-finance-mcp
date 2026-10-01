@@ -27,7 +27,8 @@ Run by Switchboard Finance Pty Ltd, Credit Representative 576702 of Australian C
 **ChatGPT:** Settings → Apps → Developer mode → Create app → paste the endpoint.
 **Claude Code:** `claude mcp add --transport http switchboard-finance https://api.switchboardfinance.com.au/mcp`
 **VS Code:** `code --add-mcp '{"name":"switchboard-finance","type":"http","url":"https://api.switchboardfinance.com.au/mcp"}'`
-**Cursor / others:**
+**Cline:** MCP Servers → Remote Servers → name `switchboard-finance`, URL above (see [llms-install.md](llms-install.md)).
+**Cursor:** this repo is a Cursor / Agent Plugin (`.cursor-plugin/plugin.json`, `mcp.json`, a skill). Or add it manually:
 ```json
 { "mcpServers": { "switchboard-finance": { "type": "http", "url": "https://api.switchboardfinance.com.au/mcp" } } }
 ```
@@ -39,7 +40,9 @@ Run by Switchboard Finance Pty Ltd, Credit Representative 576702 of Australian C
 
 ![Fit check card](screenshot.png)
 
+Demo walkthrough (all test cases against the live server): [demo.mp4](demo.mp4)
+
 ## Privacy and support
-Only details a person agrees to send through `request_callback` are received: https://www.switchboardfinance.com.au/privacy-policy · hello@switchboardfinance.com.au · 0483 980 567
+Only details a person agrees to send through `request_callback` are received: https://api.switchboardfinance.com.au/privacy · terms: https://api.switchboardfinance.com.au/terms · hello@switchboardfinance.com.au · 0483 980 567
 
 This repository documents a hosted service; the server itself is not open source.
